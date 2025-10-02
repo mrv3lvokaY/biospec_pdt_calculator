@@ -225,6 +225,8 @@
     let remainingMs = 0;
     let isPaused = false;
     let alarmCtx = null;
+    let alarmHTMLAudio = null;
+    let alarmFallbackTimer = null;
     let alarmNodes = [];
 
     
@@ -254,48 +256,89 @@ function msToMMSS(ms){
       return m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
     }
 
-    function timerUpdateUI(){
+    
+function makeBeepDataURI(freq=880, durationMs=300, vol=0.2, sampleRate=44100){
+  const length = Math.floor(sampleRate * (durationMs/1000));
+  const buffer = new Uint8Array(44 + length*2);
+  function w16(o,v){ buffer[o]=v&255; buffer[o+1]=(v>>8)&255; }
+  function w32(o,v){ buffer[o]=v&255; buffer[o+1]=(v>>8)&255; buffer[o+2]=(v>>16)&255; buffer[o+3]=(v>>24)&255; }
+  // RIFF header
+  buffer.set([82,73,70,70],0); w32(4,36+length*2); buffer.set([87,65,86,69,102,109,116,32],8);
+  w32(16,16); w16(20,1); w16(22,1); w32(24,sampleRate); w32(28,sampleRate*2); w16(32,2); w16(34,16);
+  buffer.set([100,97,116,97],36); w32(40,length*2);
+  let t=0, dt=2*Math.PI*freq/sampleRate;
+  for(let i=0;i<length;i++){ const s=Math.max(-1, Math.min(1, Math.sin(t)))*vol; t+=dt; w16(44+i*2, Math.floor(s*32767)); }
+  const b64 = btoa(String.fromCharCode.apply(null, buffer));
+  return "data:audio/wav;base64,"+b64;
+}
+
+function timerUpdateUI(){
       const disp = document.getElementById('timer-display');
       if(disp) disp.textContent = msToMMSS(remainingMs);
     }
 
     async function alarmStart(){
       try{
-        if(!alarmCtx) alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Close previous context if lingering
+        if(alarmCtx && alarmCtx.state !== 'closed' && alarmNodes.length===0){
+          try{ await alarmCtx.close(); }catch(_){}
+          alarmCtx = null;
+        }
+        // Recreate fresh context per start (more reliable on mobile)
+        alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
         if(alarmCtx.state === 'suspended'){ await alarmCtx.resume(); }
-    if(!alarmCtx) alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const g = alarmCtx.createGain();
-    g.gain.value = 0.05;
-    g.connect(alarmCtx.destination);
-    const o1 = alarmCtx.createOscillator();
-    const o2 = alarmCtx.createOscillator();
-    o1.type = 'sine'; o2.type = 'sine';
-    o1.frequency.value = 880;  // A5
-    o2.frequency.value = 988;  // B5
-    o1.connect(g); o2.connect(g);
-    o1.start(); o2.start();
-    const lfo = alarmCtx.createOscillator();
-    const lfoGain = alarmCtx.createGain();
-    lfo.frequency.value = 3.0;
-    lfoGain.gain.value = 0.04;
-    lfo.connect(lfoGain).connect(g.gain);
-    lfo.start();
-    if('vibrate' in navigator){
-      window.__vibeInt = setInterval(()=>{ navigator.vibrate([400, 200, 400, 600]); }, 1800);
-      navigator.vibrate([400, 200, 400, 600]);
+
+        const g = alarmCtx.createGain();
+        g.gain.value = 0.05;
+        g.connect(alarmCtx.destination);
+        const o1 = alarmCtx.createOscillator();
+        const o2 = alarmCtx.createOscillator();
+        o1.type = 'sine'; o2.type = 'sine';
+        o1.frequency.value = 880;  // A5
+        o2.frequency.value = 988;  // B5
+        o1.connect(g); o2.connect(g);
+        o1.start(); o2.start();
+        const lfo = alarmCtx.createOscillator();
+        const lfoGain = alarmCtx.createGain();
+        lfo.frequency.value = 3.0;
+        lfoGain.gain.value = 0.04;
+        lfo.connect(lfoGain).connect(g.gain);
+        lfo.start();
+        if('vibrate' in navigator){
+          window.__vibeInt = setInterval(()=>{ navigator.vibrate([400, 200, 400, 600]); }, 1800);
+          navigator.vibrate([400, 200, 400, 600]);
+        }
+        alarmNodes = [o1, o2, lfo, g];
+      }catch(e){
+        console.warn('WebAudio alarm failed, falling back to HTMLAudio', e);
+        try{
+          const src = makeBeepDataURI(880, 350, 0.3);
+          if(!alarmHTMLAudio){ alarmHTMLAudio = new Audio(src); } else { alarmHTMLAudio.src = src; }
+          alarmHTMLAudio.loop = false;
+          alarmHTMLAudio.play().catch(()=>{});
+          // Loop beeps with interval until Stop
+          alarmFallbackTimer = setInterval(()=>{
+            try{ alarmHTMLAudio.currentTime = 0; alarmHTMLAudio.play().catch(()=>{}); }catch(_){}
+            if('vibrate' in navigator){ navigator.vibrate([300,200,300]); }
+          }, 900);
+        }catch(ex){ console.warn('HTMLAudio fallback failed', ex); }
+      }
     }
-    alarmNodes = [o1, o2, lfo, g];
-  }catch(e){ console.warn('Alarm failed', e); }
-}
 
     function alarmStop(){
-  try{
-    alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
-    alarmNodes = [];
-    if(window.__vibeInt){ clearInterval(window.__vibeInt); window.__vibeInt = null; }
-    if('vibrate' in navigator){ navigator.vibrate(0); }
-  }catch(e){}
-}
+      try{
+        alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
+        alarmNodes = [];
+        if(alarmCtx && alarmCtx.state !== 'closed'){
+          try{ alarmCtx.close(); }catch(_){}
+        }
+        alarmCtx = null;
+        if(window.__vibeInt){ clearInterval(window.__vibeInt); window.__vibeInt = null; }
+        if('vibrate' in navigator){ navigator.vibrate(0); }
+        if(alarmFallbackTimer){ clearInterval(alarmFallbackTimer); alarmFallbackTimer = null; }
+        if(alarmHTMLAudio){ try{ alarmHTMLAudio.pause(); alarmHTMLAudio.currentTime = 0; }catch(_){ } }
+      }catch(e){}
+    }
 
     function timerStopAll(){
       if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
@@ -406,6 +449,13 @@ function msToMMSS(ms){
       document.getElementById('timer-wrap').classList.add('hidden');
       document.getElementById('timer-display').textContent='00:00';
     }
-  </script>
+  
+document.addEventListener('visibilitychange', async ()=>{
+  if(document.visibilityState === 'visible' && alarmCtx && alarmCtx.state === 'suspended'){
+    try{ await alarmCtx.resume(); }catch(_){}
+  }
+});
+
+</script>
 </body>
 </html>
