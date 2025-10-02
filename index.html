@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Калькулятор для ФДТ" />
+  <title>Калькулятор для ФДТ — расчёт времени облучения</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111827ef; --muted:#94a3b8; --text:#e5e7eb;
+      --accent:#0ea5e9; --accent-2:#22d3ee; --danger:#ef4444; --ok:#22c55e;
+      --radius:18px; --v-gap:20px; --v-gap-lg:24px;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{ margin:0; font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial; color:var(--text);
+      background: radial-gradient(1200px 600px at 100% 0%, #0b1220 40%, #0a0f1a 100%);
+      display:flex; align-items:stretch; justify-content:center; }
+    .app{ width:min(960px,100%); padding:16px; }
+    .card{ background:var(--card); border:1px solid #1f2937; border-radius:var(--radius); box-shadow:0 10px 25px #0006; padding:18px; }
+    header.card{ display:flex; align-items:center; gap:16px; justify-content:space-between; flex-wrap:wrap; }
+    .logo-wrap{ display:flex; align-items:center; gap:12px; }
+    .logo{ width:56px; height:56px; border-radius:14px; object-fit:contain; background:#fff; padding:4px; }
+    .brand{ font-weight:700; font-size:clamp(18px,3vw,22px); }
+    nav{ display:flex; gap:8px; flex-wrap:wrap; }
+    button, .btn{ appearance:none; border:1px solid #1f2937; color:var(--text); background:#0f172a;
+      border-radius:14px; padding:12px 16px; cursor:pointer; font-weight:600; transition:.2s transform,.2s background,.2s border; }
+    button:hover, .btn:hover{ transform:translateY(-1px); border-color:#334155; }
+    .primary{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#0b1220; border:none; }
+    .ghost{ background:transparent; }
+    .grid{ display:grid; gap:16px; }
+    @media(min-width:700px){ .home-grid{ grid-template-columns: 1.2fr .8fr; align-items:stretch; } }
+    h1{ margin:0 0 10px; font-size:clamp(22px,3.5vw,28px); }
+    h2{ margin:0 0 12px; font-size:clamp(18px,3vw,22px); color:#cbd5e1 }
+    p{ color:var(--muted); line-height:1.55; }
+    footer{ color:#7c8aa5; font-size:12px; text-align:center; margin-top:18px; }
+    form .row{ display:grid; gap:12px; grid-template-columns: 1fr; }
+    @media(min-width:600px){ form .row{ grid-template-columns: 1fr 1fr; } }
+    label{ display:block; font-size:14px; color:#cbd5e1; margin-bottom:6px; }
+    input[type="number"]{ width:100%; background:#0b1220; color:var(--text); border:1px solid #1f2937; border-radius:12px; padding:12px 14px; outline:none; transition:.2s border; }
+    input[type="number"]:focus{ border-color:#334155; }
+    .result{ background:#07101f; border:1px dashed #1f2937; border-radius:12px; padding:14px; }
+    .result .ok{ color:var(--ok); font-weight:700; } .result .warn{ color:#f59e0b; font-weight:700; } .result .err{ color:var(--danger); font-weight:700; }
+    .hidden{ display:none !important; }
+    #page-home, #page-calc, #page-about { margin-top: var(--v-gap); }
+    @media(min-width:900px){ #page-home, #page-calc, #page-about { margin-top: var(--v-gap-lg); } }
+    .backbar { display:flex; gap:8px; align-items:center; margin: 8px 0 12px; }
+    @media(max-width:699px){ .backbar { margin-top: 12px; } }
+    .back{ padding:10px 14px; }
+    .muted{ color:#9aa7be; font-size:13px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="card">
+      <div class="logo-wrap">
+        <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAABACAYAAACtK6/LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAA8lSURBVHhe1ZsJ0E7VH8cPspVsSZbyeiVFKEqUJQlDylA0jMYylK1RDI0h+mNGlglTUzNeW0k1JopqypadGlK27HtpE8paovP/fX7ueTzv8957n81jpu/Mnfc+99x7zu93zm8/581nBeYa49KlS+bAgQPm3Llz5s477zRFihTxWq4xYP5a4uzZs3bq1Km2fPnytlixYnbYsGH29OnTXuu1xTVdeWHcjB071rz22mvmwoULTLwpVKiQ6dmzp5k4caK54YYbvDcTAxJ08OBBs3z5cnPs2DFz4403mkaNGpkaNWokJE0F/ifw7jOKv/76y4wfP95MmDBBGc+XL59eMLB161aTP39+8+CDD5rrrrvO+yIcFy9eNHPmzDEzZswwVatWNdWrV9fJXLhwodm9e7epVauWKVy4sPe2P/J7fzOKf//913z66ae6ujBeoEAB89hjj5lu3bopszyjbenSpcpAImC1169fb0RtzIYNG8ymTZvMjh07zFNPPaUS9t577+nEhgKxzzQOHz5sy5UrB1dWVtsK4/aPP/6wp06dsq1bt9ZntFWuXNn+/PPP3lfBkMmyTz75pP3xxx/t999/b/v372/FeFpZcduxY0f766+/2rZt29rffvvN+8IfGV/5f/75x7z66qtGCNHfWVlZ5u233zbFixc3YvBMTk6OqVSpkrYdOXLEvP7663FX7MSJE/rOLbfcoqojE2aWLFliPvnkE9X3MmXKmDvuuMMcP37c+8IfGWf+p59+Mh988IGKPjqIeN90000Rna9QoYIZNWqUij/voMMwFwZZNFUdvgfcM8moQdeuXfU5hpT3wpBR5hl89uzZRsRbf+PT0XWMmwP3IsKR1f/999/NunXr9D4IpUqVUjuBhYfRihUrmnbt2pn27dvrRKPz6D+SEYaMMk8Q88477+gksLI4lqJFi3qtV4D4P/PMM3rvVp+/QUCCOnXqZKZPn64uTfRc+2cSmWCeP/DAA6paYcgo82LUjBgfvccHN2zYMCKq0eAZzDjXtH37dnP+/Hm9DwKM8t3MmTONBEnqLr/55hv9i6o9//zzcd1mRoMc3E+9evV05TFE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" alt="БИОСПЕК">
+        <div class="brand">БИОСПЕК • Калькулятор для ФДТ</div>
+      </div>
+      <nav>
+        <a class="btn ghost" href="#/">Главная</a>
+        <a class="btn ghost" href="#/about">О нас</a>
+      </nav>
+    </header>
+
+    <section id="page-home" class="grid home-grid">
+      <div class="card">
+        <h1>Выбор типа волокна</h1>
+        <p>Данное приложение необходимо для расчета дозы облучения при проведении процедуры фотодинамической терапии.</p>
+        <div class="grid" style="grid-template-columns:1fr 1fr;">
+          <a class="btn primary" href="#/calc?type=end">Торцевое волокно</a>
+          <a class="btn primary" href="#/calc?type=diff">Волокно диффузорного типа</a>
+        </div>
+        <p class="muted" style="margin-top:12px">Поддерживается офлайн-режим и добавление на домашний экран (Android/iOS).</p>
+      </div>
+      <div class="card">
+        <h2>Как это работает</h2>
+        <p>Введите <b>Дозу (Дж/см²)</b>, <b>Параметры волокна (мм)</b>, <b>Пропускание волокна (%)</b> и <b>Мощность лазера (Вт)</b>. Мы вычислим требуемую энергию и время облучения. Если время ≥ 1 мин, результат показывается в минутах и секундах; если меньше — только в секундах.</p>
+        
+      </div>
+    </section>
+
+    <section id="page-calc" class="hidden">
+      <div class="backbar">
+        <button class="back" onclick="history.back()">← Назад</button>
+        <span class="muted" id="calc-kind"></span>
+      </div>
+      <div class="card">
+        <h1>Расчёт времени облучения</h1>
+        <form id="calc-form" onsubmit="event.preventDefault(); calculate();">
+          <div class="row">
+            <div id="diam-wrap">
+              <label for="diam">Диаметр, мм</label>
+              <input type="number" id="diam" inputmode="decimal" min="0" step="0.1" placeholder="напр., 5">
+            </div>
+            <div id="len-wrap" class="hidden">
+              <label for="lenmm">Длина диффузора, мм</label>
+              <input type="number" id="lenmm" inputmode="decimal" min="0" step="0.1" placeholder="напр., 20">
+              <div class="muted" id="assume-note" style="margin-top:6px"></div>
+            </div>
+            <div>
+              <label for="dose">Доза облучения, Дж/см²</label>
+              <input type="number" id="dose" inputmode="decimal" min="0" step="0.01" placeholder="напр., 100" required>
+            </div>
+            <div>
+              <label for="trans">Пропускание волокна, %</label>
+              <input type="number" id="trans" inputmode="decimal" min="0" max="100" step="0.1" placeholder="напр., 80" required>
+            </div>
+            <div>
+              <label for="power">Мощность лазера, Вт</label>
+              <input type="number" id="power" inputmode="decimal" min="0" step="0.001" placeholder="напр., 0.3" required>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:14px">
+            <button type="submit" class="btn primary">Рассчитать</button>
+            <button type="reset" class="btn" onclick="clearResult()">Сбросить</button>
+          </div>
+        </form>
+        <div id="result" class="result" style="margin-top:14px; display:none"></div>
+      </div>
+    </section>
+
+    <section id="page-about" class="hidden">
+      <div class="backbar"><button class="back" onclick="history.back()">← Назад</button></div>
+      <div class="card"><h1>О нас</h1><p>Программа разработана компанией «БИОСПЕК» и является интеллектуальной собственностью компании.</p></div>
+    </section>
+
+    <footer>© <span id="year"></span> БИОСПЕК • Все права защищены</footer>
+  </main>
+
+  <script>
+    const DIFFUSER_DIAMETER_MM = 1.0; // принятый диаметр диффузора (можно изменить)
+    const routes = {'#/':'page-home','#/calc':'page-calc','#/about':'page-about'};
+
+    function setRoute(){
+      const hash=location.hash||'#/';
+      for(const id of Object.values(routes)){ document.getElementById(id).classList.add('hidden'); }
+      const base=hash.split('?')[0];
+      const pageId=routes[base]||'page-home';
+      document.getElementById(pageId).classList.remove('hidden');
+
+      if(pageId==='page-calc'){
+        const params=new URLSearchParams(hash.split('?')[1]||'');
+        const type=params.get('type');
+        const map={end:'Торцевое волокно', diff:'Волокно диффузорного типа'};
+        document.getElementById('calc-kind').textContent = map[type] || '';
+
+        const diamWrap=document.getElementById('diam-wrap');
+        const lenWrap=document.getElementById('len-wrap');
+        const diamInput=document.getElementById('diam');
+        const lenInput=document.getElementById('lenmm');
+        const note=document.getElementById('assume-note');
+
+        if(type==='diff'){
+          // Диффузор: диаметр скрыт, длина обязательна
+          diamWrap.classList.add('hidden'); diamInput.required=false; diamInput.value='';
+          lenWrap.classList.remove('hidden'); lenInput.required=true;
+          note.textContent = `Принято: диаметр диффузора D = ${DIFFUSER_DIAMETER_MM} мм`;
+        } else {
+          // Торцевое: диаметр обязателен, длина скрыта
+          diamWrap.classList.remove('hidden'); diamInput.required=true;
+          lenWrap.classList.add('hidden'); lenInput.required=false; lenInput.value='';
+          note.textContent='';
+        }
+        clearResult();
+      }
+    }
+    window.addEventListener('hashchange', setRoute);
+    window.addEventListener('load', ()=>{ setRoute(); document.getElementById('year').textContent=new Date().getFullYear(); });
+
+    function fmtTime(seconds){
+      if(!isFinite(seconds)||seconds<0){ return '<span class="err">Некорректный результат</span>'; }
+      if(seconds>=60){
+        const m=Math.floor(seconds/60);
+        const s=Math.round(seconds%60);
+        const s2=s.toString().padStart(2,'0');
+        return `<span class="ok">${m} мин ${s2} с</span>`;
+      } else {
+        const s=Math.round(seconds);
+        return `<span class="ok">${s} с</span>`;
+      }
+    }
+
+    function calculate(){
+      const dose=parseFloat(document.getElementById('dose').value);   // J/cm^2
+      const trans=parseFloat(document.getElementById('trans').value); // %
+      const power=parseFloat(document.getElementById('power').value); // W
+      const out=document.getElementById('result');
+
+      const type=(location.hash.split('?')[1]||'').includes('type=diff') ? 'diff' : 'end';
+
+      if([dose,trans,power].some(v=>!isFinite(v))){
+        out.style.display='block'; out.innerHTML='<div class="err">Проверьте введённые значения.</div>'; return;
+      }
+      if(dose<=0||power<=0||trans<=0){
+        out.style.display='block'; out.innerHTML='<div class="warn">Все значения должны быть больше нуля.</div>'; return;
+      }
+
+      let area_cm2;
+      if(type==='diff'){
+        const len_mm=parseFloat(document.getElementById('lenmm').value);
+        if(!isFinite(len_mm)||len_mm<=0){
+          out.style.display='block'; out.innerHTML='<div class="warn">Укажите положительную длину диффузора.</div>'; return;
+        }
+        const D_cm = DIFFUSER_DIAMETER_MM / 10;
+        const L_cm = len_mm / 10;
+        area_cm2 = Math.PI * D_cm * L_cm;       // π * D * L
+      } else {
+        const diam_mm=parseFloat(document.getElementById('diam').value);
+        if(!isFinite(diam_mm)||diam_mm<=0){
+          out.style.display='block'; out.innerHTML='<div class="warn">Укажите положительный диаметр.</div>'; return;
+        }
+        const diam_cm=diam_mm/10;
+        area_cm2 = Math.PI * Math.pow(diam_cm/2,2); // π*(D/2)^2
+      }
+
+      const energy_J = dose * area_cm2;
+      const eff_power_W = power * (trans/100);
+      if(eff_power_W<=0){ out.style.display='block'; out.innerHTML='<div class="err">Пропускание или мощность дают нулевую выходную мощность.</div>'; return; }
+
+      const time_s = energy_J / eff_power_W;
+      const geomDetail = (type==='diff')
+        ? `Площадь цилиндра: <b>${area_cm2.toFixed(3)}</b> см² (π·D·L, D=${DIFFUSER_DIAMETER_MM} мм)`
+        : `Площадь пятна: <b>${area_cm2.toFixed(3)}</b> см² (π·(D/2)²)`;
+      const detail = `⟂ ${geomDetail} · Требуемая энергия: <b>${energy_J.toFixed(2)}</b> Дж · Выходная мощность: <b>${eff_power_W.toFixed(3)}</b> Вт`;
+
+      out.style.display='block';
+      out.innerHTML = `<div>Время облучения: ${fmtTime(time_s)}</div><div class="muted" style="margin-top:6px">${detail}</div>`;
+    }
+
+    function clearResult(){ const out=document.getElementById('result'); out.style.display='none'; out.innerHTML=''; }
+
+    (function setupPWA(){
+      try{
+        const manifest={
+          name:"Калькулятор для ФДТ",
+          short_name:"ФДТ",
+          description:"Расчёт времени облучения при ФДТ (БИОСПЕК)",
+          display:"standalone",
+          start_url:"./#/",
+          background_color:"#0b1220",
+          theme_color:"#0ea5e9",
+          icons:[
+            { src: iconDataURL(192), sizes:"192x192", type:"image/png" },
+            { src: iconDataURL(512), sizes:"512x512", type:"image/png" }
+          ]
+        };
+        const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+        const url=URL.createObjectURL(blob);
+        const link=document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
+        const ico=document.createElement('link'); ico.rel='apple-touch-icon'; ico.href=iconDataURL(180); document.head.appendChild(ico);
+        if('serviceWorker' in navigator){
+          const swCode = "self.addEventListener('install',e=>{e.waitUntil(caches.open('fdt-v1').then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})";
+          const swBlob=new Blob([swCode],{type:'text/javascript'});
+          const swUrl=URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl);
+        }
+      }catch(e){console.warn('PWA setup skipped', e)}
+
+      function iconDataURL(size){
+        const canvas=document.createElement('canvas'); canvas.width=canvas.height=size; const ctx=canvas.getContext('2d');
+        const g=ctx.createLinearGradient(0,0,size,size); g.addColorStop(0,'#0ea5e9'); g.addColorStop(1,'#22d3ee');
+        ctx.fillStyle=g; ctx.fillRect(0,0,size,size);
+        ctx.fillStyle='#001524'; ctx.font = (Math.floor(size*0.40)) + 'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('BSP', size/2, size/2);
+        return canvas.toDataURL('image/png');
+      }
+    })();
+  </script>
+</body>
+</html>
