@@ -227,7 +227,26 @@
     let alarmCtx = null;
     let alarmNodes = [];
 
-    function msToMMSS(ms){
+    
+// === Audio unlock for mobile ===
+let audioReady = false;
+async function ensureAudioUnlocked(){
+  try{
+    if(!alarmCtx) alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(alarmCtx.state === 'suspended'){ await alarmCtx.resume(); }
+    // tiny silent buffer to unlock
+    const buffer = alarmCtx.createBuffer(1,1,22050);
+    const src = alarmCtx.createBufferSource();
+    src.buffer = buffer; src.connect(alarmCtx.destination); src.start(0);
+    audioReady = true;
+  }catch(e){ console.warn('Audio unlock failed', e); }
+}
+// try to unlock on first user gesture
+['pointerdown','touchstart','click','keydown'].forEach(evt=>{
+  window.addEventListener(evt, ()=>{ if(!audioReady) ensureAudioUnlocked(); }, {passive:true});
+});
+
+function msToMMSS(ms){
       if(ms < 0) ms = 0;
       const totalSec = Math.ceil(ms/1000);
       const m = Math.floor(totalSec/60);
@@ -240,8 +259,10 @@
       if(disp) disp.textContent = msToMMSS(remainingMs);
     }
 
-    function alarmStart(){
-  try{
+    async function alarmStart(){
+      try{
+        if(!alarmCtx) alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if(alarmCtx.state === 'suspended'){ await alarmCtx.resume(); }
     if(!alarmCtx) alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
     const g = alarmCtx.createGain();
     g.gain.value = 0.05;
@@ -300,7 +321,7 @@
       const stopBtn  = document.getElementById('btn-stop');
       const rstBtn   = document.getElementById('btn-restart');
       if(!startBtn) return;
-      startBtn.onclick = ()=>{
+      startBtn.onclick = async ()=>{ await ensureAudioUnlocked();
         // start countdown loop only if not already running and there is time
         if(timerInterval || remainingMs<=0) return;
         let lastTs = Date.now();
