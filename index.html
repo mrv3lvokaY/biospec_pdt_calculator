@@ -30,7 +30,7 @@
     .btn-danger:hover{ filter:brightness(1.1); }
     .ghost{ background:transparent; }
     .grid{ display:grid; gap:16px; }
-    @media(min-width:700px){ .home-grid{ grid-template-columns: 1.2fr .8fr; align-items:stretch; } }
+    @media(min-width:700px){ .home-grid{ grid-template-columns: 1fr; align-items:stretch; } }
     .home-grid .btn{ width:100%; justify-content:center; }
     h1{ margin:0 0 10px; font-size:clamp(22px,3.5vw,28px); }
     h2{ margin:0 0 12px; font-size:clamp(18px,3vw,22px); color:#cbd5e1 }
@@ -66,20 +66,18 @@
         <a class="btn ghost" href="#/about">О нас</a>
       </nav>
     </header>
+<p class="muted" style="margin-top:14px; text-align:center;">Приложение для расчета дозы облучения при фотодинамической терапии</p>
+
 
     <section id="page-home" class="grid home-grid">
       <div class="card">
-        <h1>Выбор типа волокна</h1>
-        <p>Данное приложение необходимо для расчета дозы облучения при проведении процедуры фотодинамической терапии.</p>
+        <h1 style="text-align:center; margin-bottom:24px;">Выбор типа волокна</h1>
+        
         <div class="grid" style="grid-template-columns:1fr 1fr;">
           <a class="btn primary" href="#/calc?type=end">Торцевое волокно</a>
           <a class="btn primary" href="#/calc?type=diff">Волокно с цилиндрическим рассеивателем</a>
         </div>
         
-      </div>
-      <div class="card">
-        <h2>Как это работает</h2>
-        <p>Введите <b>плотность энергии (Дж/см²)</b>, <b>параметры волокна (мм)</b>, <b>пропускание волокна (%)</b> и <b>мощность лазера (мВт)</b>. Мы вычислим требуемую энергию и время облучения. Если время ≥ 1 мин, результат показывается в минутах и секундах; если меньше — только в секундах.</p>
       </div>
     </section>
 
@@ -1325,5 +1323,67 @@ const pauseBtn = document.getElementById('btn-pause');
   }, false);
 })();
 </script>
+
+<script>
+(function(){
+  if (window.__reset_patch_applied) return;
+  window.__reset_patch_applied = true;
+
+  function resetFormAndResult(){
+    try {
+      var f = document.getElementById('calc-form');
+      if (f){
+        // Native reset
+        f.reset();
+        // Hard clear values to avoid browser autofill residues
+        var inputs = f.querySelectorAll('input[type="number"], input[type="text"], input[type="tel"], input[type="email"]');
+        inputs.forEach(function(el){ el.value = ''; });
+      }
+    } catch(e){}
+    try { if (typeof clearResult === 'function') clearResult(); } catch(e){}
+  }
+  window.resetFormAndResult = resetFormAndResult;
+
+  // Hook "Сбросить" button just in case
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest && e.target.closest('button[type="reset"], input[type="reset"]');
+    if (btn) { setTimeout(resetFormAndResult, 0); }
+  }, true);
+
+  // Clear when leaving #/calc OR switching type within #/calc
+  function baseOf(h){ return (h||'#/').split('?')[0]; }
+  function typeOf(h){ var q=(h||'').split('?')[1]||''; var p=new URLSearchParams(q); return p.get('type')||''; }
+
+  var lastHash = location.hash || '#/';
+  var lastBase = baseOf(lastHash);
+  var lastType = typeOf(lastHash);
+
+  window.addEventListener('hashchange', function(){
+    var curHash = location.hash || '#/';
+    var curBase = baseOf(curHash);
+    var curType = typeOf(curHash);
+
+    // Leaving calc entirely
+    if (lastBase === '#/calc' && curBase !== '#/calc') {
+      resetFormAndResult();
+    }
+    // Staying on calc but changing fiber type
+    if (lastBase === '#/calc' && curBase === '#/calc' && curType !== lastType) {
+      resetFormAndResult();
+    }
+
+    lastHash = curHash;
+    lastBase = curBase;
+    lastType = curType;
+  }, false);
+
+  // Also clear on initial enter to #/calc to avoid stale values from prior session
+  if (baseOf(location.hash) === '#/calc') {
+    // slight defer to let route rendering happen
+    setTimeout(resetFormAndResult, 0);
+  }
+})();
+</script>
+
 </body>
 </html>
