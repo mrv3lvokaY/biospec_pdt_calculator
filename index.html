@@ -75,7 +75,7 @@
           <a class="btn primary" href="#/calc?type=end">Торцевое волокно</a>
           <a class="btn primary" href="#/calc?type=diff">Волокно с цилиндрическим рассеивателем</a>
         </div>
-        <p class="muted" style="margin-top:12px">Поддерживается офлайн-режим и добавление на домашний экран (Android/iOS).</p>
+        
       </div>
       <div class="card">
         <h2>Как это работает</h2>
@@ -146,7 +146,8 @@
       <div class="card"><h1>О нас</h1><p>Программа разработана компанией «БИОСПЕК» и является интеллектуальной собственностью компании.</p></div>
     </section>
 
-    <footer>© <span id="year"></span> БИОСПЕК • Все права защищены</footer>
+    <div class="muted" style="margin-top:20px; text-align:center">Поддерживается офлайн-режим и добавление на домашний экран (Android/iOS).</div>
+<footer>© <span id="year"></span> БИОСПЕК • Все права защищены<div class="muted" style="margin-top:4px">Designed by Dmitry Yakovlev</div></footer>
   </main>
 
   <script>
@@ -220,126 +221,8 @@
       return `<span class="ok">${Math.round(seconds)} с</span>`;
     }
 
-    // === Countdown timer & alarm ===
-    let timerInterval = null;
-    let remainingMs = 0;
-    let isPaused = false;
-    let alarmCtx = null;
-    let alarmNodes = [];
+    // [removed legacy timer block to avoid conflicts]
 
-    function msToMMSS(ms){
-      if(ms < 0) ms = 0;
-      const totalSec = Math.ceil(ms/1000);
-      const m = Math.floor(totalSec/60);
-      const s = totalSec % 60;
-      return m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
-    }
-
-    function timerUpdateUI(){
-      const disp = document.getElementById('timer-display');
-      if(disp) disp.textContent = msToMMSS(remainingMs);
-    }
-
-    function alarmStart(){
-  try{
-    if(!alarmCtx) alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const g = alarmCtx.createGain();
-    g.gain.value = 0.05;
-    g.connect(alarmCtx.destination);
-    const o1 = alarmCtx.createOscillator();
-    const o2 = alarmCtx.createOscillator();
-    o1.type = 'sine'; o2.type = 'sine';
-    o1.frequency.value = 880;  // A5
-    o2.frequency.value = 988;  // B5
-    o1.connect(g); o2.connect(g);
-    o1.start(); o2.start();
-    const lfo = alarmCtx.createOscillator();
-    const lfoGain = alarmCtx.createGain();
-    lfo.frequency.value = 3.0;
-    lfoGain.gain.value = 0.04;
-    lfo.connect(lfoGain).connect(g.gain);
-    lfo.start();
-    if('vibrate' in navigator){
-      window.__vibeInt = setInterval(()=>{ navigator.vibrate([400, 200, 400, 600]); }, 1800);
-      navigator.vibrate([400, 200, 400, 600]);
-    }
-    alarmNodes = [o1, o2, lfo, g];
-  }catch(e){ console.warn('Alarm failed', e); }
-}
-
-    function alarmStop(){
-  try{
-    alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
-    alarmNodes = [];
-    if(window.__vibeInt){ clearInterval(window.__vibeInt); window.__vibeInt = null; }
-    if('vibrate' in navigator){ navigator.vibrate(0); }
-  }catch(e){}
-}
-
-    function timerStopAll(){
-      if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-      isPaused = false;
-      remainingMs = 0;
-      timerUpdateUI();
-      alarmStop();
-    }
-
-    function startTimer(seconds){
-      const wrap = document.getElementById('timer-wrap');
-      wrap.classList.remove('hidden');
-      remainingMs = Math.max(0, Math.round(seconds*1000));
-      isPaused = false;
-      timerUpdateUI();
-      if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-    }
-
-    // Ensure buttons are wired once
-    (function wireTimerButtons(){
-      const startBtn = document.getElementById('btn-start');
-      const pauseBtn = document.getElementById('btn-pause');
-      const stopBtn  = document.getElementById('btn-stop');
-      const rstBtn   = document.getElementById('btn-restart');
-      if(!startBtn) return;
-      startBtn.onclick = ()=>{
-        // start countdown loop only if not already running and there is time
-        if(timerInterval || remainingMs<=0) return;
-        let lastTs = Date.now();
-        timerUpdateUI();
-        timerInterval = setInterval(()=>{
-          if(isPaused) return;
-          const now = Date.now();
-          const elapsed = now - lastTs;
-          lastTs = now;
-          remainingMs -= elapsed;
-          if(remainingMs <= 0){
-            remainingMs = 0;
-            timerUpdateUI();
-            clearInterval(timerInterval); timerInterval = null;
-            alarmStart(); // start continuous alarm
-          } else {
-            timerUpdateUI();
-          }
-        }, 200);
-      };
-      pauseBtn.onclick = ()=>{
-        isPaused = !isPaused;
-        pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза';
-      };
-      stopBtn.onclick = ()=>{
-        // stop timer and alarm
-        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-        alarmStop();
-      };
-      rstBtn.onclick = ()=>{
-        // reset to original time without starting and stop alarm
-        alarmStop();
-        const originalSeconds = parseFloat(document.getElementById('result').dataset.lastSeconds || '0');
-        remainingMs = Math.max(0, Math.round((isFinite(originalSeconds)?originalSeconds:0)*1000));
-        isPaused = false;
-        timerUpdateUI();
-        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-      };
-    })();
 
     function calculate(){
       const dose=parseFloat(document.getElementById('dose').value);
@@ -400,6 +283,7 @@
   let timerInterval = null;
   let remainingMs = 0;
   let isPaused = false;
+  let lastTickTs = 0; // track last timestamp while running
 
   // WebAudio alarm
   let audioCtx = null;
@@ -519,12 +403,12 @@
       startBtn.onclick = async ()=>{
         await ensureAudioUnlocked();
         if(timerInterval || remainingMs<=0) return;
-        let last = Date.now();
+        lastTickTs = Date.now();
         timerUpdateUI();
         timerInterval = setInterval(()=>{
           if(isPaused) return;
           const now = Date.now();
-          const d = now - last; last = now;
+          const d = now - lastTickTs; lastTickTs = now;
           remainingMs -= d;
           if(remainingMs <= 0){
             remainingMs = 0; timerUpdateUI();
@@ -537,10 +421,7 @@
       };
     }
     if(pauseBtn){
-      pauseBtn.onclick = ()=>{
-        isPaused = !isPaused;
-        pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза';
-      };
+      pauseBtn.onclick = ()=>{ isPaused = !isPaused; if(!isPaused){ lastTickTs = Date.now(); } pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза'; };
     }
     if(stopBtn){
       stopBtn.onclick = ()=>{
