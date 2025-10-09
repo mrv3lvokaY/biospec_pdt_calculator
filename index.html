@@ -148,27 +148,195 @@
   </main>
 
   <script>
+
+
+
+
+
+
+    (function setupPWA(){
+      try{
+        const logoData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAABACAYAAACtK6/LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAA8lSURBVHhe1ZsJ0E7VH8cPspVsSZbyeiVFKEqUJQlDylA0jMYylK1RDI0h+mNGlglTUzNeW0k1JopqypadGlK27HtpE8paovP/fX7ueTzv8957n81jpu/Mnfc+99x7zu93zm8/581nBeYa49KlS+bAgQPm3Llz5s477zRFihTxWq4xYP5a4uzZs3bq1Km2fPnytlixYnbYsGH29OnTXuu1xTVdeWHcjB071rz22mvmwoULTLwpVKiQ6dmzp5k4caK54YYbvDcTAxJ08OBBs3z5cnPs2DFz4403mkaNGpkaNWokJE0F/ifw7jOKv/76y4wfP95MmDBBGc+XL59eMLB161aTP39+8+CDD5rrrrvO+yIcFy9eNHPmzDEzZswwVatWNdWrV9fJXLhwodm9e7epVauWKVy4sPe2P/J7fzOKf//913z66ae6ujBeoEAB89hjj5lu3bopszyjbenSpcpAImC1169fb0RtzIYNG8ymTZvMjh07zFNPPaUS9t577+nEhgKxzzQOHz5sy5UrB1dWVtsK4/aPP/6wp06dsq1bt9ZntFWuXNn+/PPP3lfBkMmyTz75pP3xxx/t999/b/v372/FeFpZcduxY0f766+/2rZt29rffvvN+8IfGV/5f/75x7z66qtGCNHfWVlZ5u233zbFixc3YvBMTk6OqVSpkrYdOXLEvP7663FX7MSJE/rOLbfcoqojE2aWLFliPvnkE9X3MmXKmDvuuMMcP37c+8IfGWf+p59+Mh988IGKPjqIeN90000Rna9QoYIZNWqUij/voMMwFwZZNFUdvgfcM8moQdeuXfU5hpT3wpBR5hl89uzZRsRbf+PT0XWMmwP3IsKR1f/999/NunXr9D4IpUqVUjuBhYfRihUrmnbt2pn27dvrRKPz6D+SEYaMMk8Q88477+gksLI4lqJFi3qtV4D4P/PMM3rvVp+/QUCCOnXqZKZPn64uTfRc+2cSmWCeP/DAA6paYcgo82LUjBgfvccHN2zYMCKq0eAZzDjXtH37dnP+/Hm9DwKM8t3MmTONBEnqLr/55hv9i6o9//zzcd1mRoMc3E+9evV05TFE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";
+        const manifest = {
+          name:"Калькулятор для ФДТ",
+          short_name:"ФДТ",
+          description:"Расчёт времени облучения при ФДТ (БИОСПЕК)",
+          display:"standalone",
+          start_url:"./#/",
+          background_color:"#0b1220",
+          theme_color:"#0ea5e9",
+          icons:[
+            { src: logoData, sizes:"192x192", type:"image/png" },
+            { src: logoData, sizes:"512x512", type:"image/png" }
+          ]
+        };
+        const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+        const url=URL.createObjectURL(blob);
+        const link=document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
+        if('serviceWorker' in navigator){
+          const swCode = "self.addEventListener('install',e=>{e.waitUntil(caches.open('fdt-v1').then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})";
+          const swBlob=new Blob([swCode],{type:'text/javascript'}); const swUrl=URL.createObjectURL(swBlob); navigator.serviceWorker.register(swUrl);
+        }
+      }catch(e){console.warn('PWA setup skipped', e)}
+    })();
+
+    const routes = { '#/': 'page-home', '#/calc': 'page-calc', '#/about': 'page-about' };
+    function setRoute(){
+      const hash = location.hash || '#/';
+      for(const id of Object.values(routes)) document.getElementById(id).classList.add('hidden');
+      const base = hash.split('?')[0];
+      const pageId = routes[base] || 'page-home';
+      document.getElementById(pageId).classList.remove('hidden');
+
+      if(pageId==='page-calc'){
+        const params=new URLSearchParams(hash.split('?')[1]||'');
+        const type=params.get('type');
+        const map={end:'Торцевое волокно', diff:'Волокно с цилиндрическим рассеивателем'};
+        document.getElementById('calc-kind').textContent = map[type] || '';
+
+        setFieldsVisibility(type==='diff' ? 'diff' : 'end');
+        clearResult();
+      }
+    }
+    window.addEventListener('hashchange', setRoute);
+    window.addEventListener('load', ()=>{ setRoute(); document.getElementById('year').textContent=new Date().getFullYear(); });
+
+    function setFieldsVisibility(mode){
+      const show = id => document.getElementById(id).classList.remove('hidden');
+      const hide = id => document.getElementById(id).classList.add('hidden');
+
+      const diam = document.getElementById('diam');
+      const len  = document.getElementById('lenmm');
+      const diamcyl  = document.getElementById('diamcyl');
+
+      if(mode==='diff'){
+        hide('field-diam'); show('field-len'); show('field-diamcyl');
+        len.required = true; diamcyl.required = true; diam.required = false; diam.value='';
+      } else {
+        show('field-diam'); hide('field-len'); hide('field-diamcyl');
+        diam.required = true; len.required=false; diamcyl.required=false; len.value=''; diamcyl.value='';
+      }
+    }
+
+    function fmtTime(seconds){
+      if(!isFinite(seconds)||seconds<0) return '<span class="err">Некорректный результат</span>';
+      if(seconds>=60){ const m=Math.floor(seconds/60), s=Math.round(seconds%60); return `<span class="ok">${m} мин ${s.toString().padStart(2,'0')} с</span>`; }
+      return `<span class="ok">${Math.round(seconds)} с</span>`;
+    }
+
+    // [removed legacy timer block to avoid conflicts]
+
+
+    function calculate(){
+      const dose=parseFloat(document.getElementById('dose').value);
+      const trans=parseFloat(document.getElementById('trans').value);
+      let power=parseFloat(document.getElementById('power').value);
+      if(isFinite(power)) power = power / 1000.0; // мВт -> Вт
+      const out=document.getElementById('result');
+      const type=(location.hash.split('?')[1]||'').includes('type=diff') ? 'diff' : 'end';
+
+      if([dose,trans,power].some(v=>!isFinite(v))){ out.style.display='block'; out.innerHTML='<div class="err">Проверьте введённые значения.</div>'; return; }
+      if(dose<=0||power<=0||trans<=0){ out.style.display='block'; out.innerHTML='<div class="warn">Все значения должны быть больше нуля.</div>'; return; }
+
+      let area_cm2;
+      if(type==='diff'){
+        const len_mm=parseFloat(document.getElementById('lenmm').value);
+        const diamcyl_mm=parseFloat(document.getElementById('diamcyl').value);
+        if(!isFinite(len_mm)||len_mm<=0){ out.style.display='block'; out.innerHTML='<div class="warn">Укажите положительную длину диффузора.</div>'; return; }
+        if(!isFinite(diamcyl_mm)||diamcyl_mm<=0){ out.style.display='block'; out.innerHTML='<div class="warn">Укажите положительный диаметр поверхности облучения.</div>'; return; }
+        const D_cm = diamcyl_mm/10, h_cm = len_mm/10;
+        area_cm2 = Math.PI * D_cm * h_cm; // π·D·h
+      } else {
+        const diam_mm=parseFloat(document.getElementById('diam').value);
+        if(!isFinite(diam_mm)||diam_mm<=0){ out.style.display='block'; out.innerHTML='<div class="warn">Укажите положительный диаметр зоны.</div>'; return; }
+        const diam_cm=diam_mm/10;
+        area_cm2 = Math.PI * Math.pow(diam_cm/2,2); // π·(D/2)²
+      }
+
+      const energy_J = dose * area_cm2;
+      const eff_power_W = power * (trans/100);
+      if(eff_power_W<=0){ out.style.display='block'; out.innerHTML='<div class="err">Пропускание или мощность дают нулевую выходную мощность.</div>'; return; }
+
+      const time_s = energy_J / eff_power_W;
+      const timerSec = Math.ceil(time_s);
+      const power_density_mW = (eff_power_W * 1000) / area_cm2; // мВт/см2
+      out.style.display='block';
+      out.innerHTML = `<div>Время облучения: ${fmtTime(timerSec)}</div>` +
+                      `<div class="muted" style="margin-top:4px;font-size:12px">Плотность мощности: ${power_density_mW.toFixed(1)} мВт/см2</div>`;
+      out.dataset.lastSeconds = timerSec.toString();
+      if (window.prepareTimerSeconds) window.prepareTimerSeconds(timerSec);
+      startTimer(time_s); /* ожидание нажатия Старт */
+    }
+
+    function clearResult(){
+  try { stopAll(); } catch(e){}
+  const out = document.getElementById('result');
+  if (out){
+    out.style.display = 'none';
+    out.innerHTML = '';
+    try { delete out.dataset.lastSeconds; } catch(_) { out.removeAttribute('data-last-seconds'); }
+  }
+  const wrap = document.getElementById('timer-wrap');
+  if (wrap) wrap.classList.add('hidden');
+  const disp = document.getElementById('timer-display');
+  if (disp) disp.textContent = '00:00';
+  try { if (typeof remainingMs !== 'undefined') { remainingMs = 0; } } catch(_) {}
+}
+  
+
 // ===== Manual-start timer + robust alarm (WebAudio + vibration + notifications) =====
 (function(){
+  // Guard: don't double-inject
   if (window.__fdtTimerPatched) return;
   window.__fdtTimerPatched = true;
 
   let timerInterval = null;
   let remainingMs = 0;
   let isPaused = false;
-  let targetEndTs = 0;
+  let lastTickTs = 0; // track last timestamp while running
+
+  let endAtTs = 0; // timestamp when countdown should end (ms since epoch)
 
   const LS_KEY = 'fdt_timer_state_v1';
+  function saveState(){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify({ remainingMs, isPaused, endAtTs })); }catch(_){}
+  }
+  function loadState(){
+    try{ const s = JSON.parse(localStorage.getItem(LS_KEY)||'{}');
+      if(typeof s.remainingMs==='number') remainingMs = s.remainingMs;
+      if(typeof s.isPaused==='boolean')   isPaused   = s.isPaused;
+      if(typeof s.endAtTs==='number')     endAtTs    = s.endAtTs;
+    }catch(_){}
+  }
+  function ensureTicking(startBtn){
+    if(timerInterval) return;
+    lastTickTs = Date.now();
+    timerInterval = setInterval(()=>{
+      if(isPaused){ lastTickTs = Date.now(); return; }
+      remainingMs = Math.max(0, endAtTs ? (endAtTs - Date.now()) : remainingMs - (Date.now()-lastTickTs));
+      lastTickTs = Date.now();
+      if(remainingMs <= 0){
+        remainingMs = 0; timerUpdateUI(); clearInterval(timerInterval); timerInterval=null;
+        if(startBtn){ startBtn.textContent='Старт'; startBtn.style.backgroundColor='#28a745'; startBtn.style.color='white'; }
+        alarmStart(); saveState();
+      } else { timerUpdateUI(); }
+    }, 200);
+  }
 
+  // WebAudio alarm
   let audioCtx = null;
   let alarmNodes = [];
   let audioReady = false;
+
+  // Vibration interval
   let vibeInt = null;
 
+  // Try to unlock audio on any user gesture
   async function ensureAudioUnlocked(){
     try{
       if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+      // tiny silent buffer
       const buffer = audioCtx.createBuffer(1, 1, 22050);
       const src = audioCtx.createBufferSource();
       src.buffer = buffer; src.connect(audioCtx.destination); src.start(0);
@@ -196,26 +364,29 @@
       if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
 
+      // gentle dual-sine
       const g = audioCtx.createGain();
       g.gain.value = 0.05;
       g.connect(audioCtx.destination);
       const o1 = audioCtx.createOscillator();
       const o2 = audioCtx.createOscillator();
       o1.type='sine'; o2.type='sine';
-      o1.frequency.value = 880;
-      o2.frequency.value = 988;
+      o1.frequency.value = 880;   // A5
+      o2.frequency.value = 988;   // B5
       o1.connect(g); o2.connect(g);
       o1.start(); o2.start();
       const lfo = audioCtx.createOscillator(); const lfoGain = audioCtx.createGain();
       lfo.frequency.value = 3.0; lfoGain.gain.value = 0.04; lfo.connect(lfoGain).connect(g.gain); lfo.start();
       alarmNodes = [o1,o2,lfo,g];
 
+      // vibration pattern loop
       if('vibrate' in navigator){
         if(vibeInt) clearInterval(vibeInt);
         navigator.vibrate([400,200,400,600]);
         vibeInt = setInterval(()=>{ navigator.vibrate([400,200,400,600]); }, 1800);
       }
 
+      // notification
       try{
         if ("Notification" in window) {
           if (Notification.permission === "granted") {
@@ -224,11 +395,13 @@
             Notification.requestPermission();
           }
         }
-      }catch(e){}
+      }catch(e){ /* ignore */ }
+
     }catch(e){
       console.warn('alarmStart failed', e);
     }
   }
+
   function alarmStop(){
     try{
       alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
@@ -238,108 +411,109 @@
     }catch(e){}
   }
 
-  function saveState(){
-    try{
-      const state = { v:1, isPaused, remainingMs, targetEndTs };
-      localStorage.setItem(LS_KEY, JSON.stringify(state));
-    }catch(_){}
-  }
-  function loadState(){
-    try{
-      const raw = localStorage.getItem(LS_KEY);
-      if(!raw) return null;
-      const s = JSON.parse(raw);
-      if(!s || s.v !== 1) return null;
-      return s;
-    }catch(_){ return null; }
-  }
-  function clearState(){ try{ localStorage.removeItem(LS_KEY); }catch(_){ } }
-
-  function startIntervalLoop(){
-    if(timerInterval) return;
-    timerInterval = setInterval(()=>{
-      if(isPaused){ return; }
-      if(targetEndTs>0){ remainingMs = Math.max(0, targetEndTs - Date.now()); }
-      timerUpdateUI();
-      if(remainingMs <= 0){
-        clearInterval(timerInterval); timerInterval = null;
-        targetEndTs = 0;
-        isPaused = false;
-        saveState();
-        const startBtn = document.getElementById('btn-start');
-        if (startBtn){
-          startBtn.textContent = 'Старт';
-          startBtn.style.backgroundColor = '#28a745';
-          startBtn.style.color = 'white';
-        }
-        alarmStart();
-      } else {
-        saveState();
-      }
-    }, 200);
-  }
-
-  function pauseTimer(){
-    if(isPaused) return;
-    remainingMs = Math.max(0, targetEndTs - Date.now());
-    isPaused = true;
-    targetEndTs = 0;
-    saveState();
-  }
   function stopAll(){
     if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
     isPaused = false;
     remainingMs = 0;
-    targetEndTs = 0;
     timerUpdateUI();
     alarmStop();
-    saveState();
   }
 
+  // Wire buttons if present
   function wireButtons(){
     const startBtn = document.getElementById('btn-start');
+    
+// Ensure Start button is always green when label is 'Старт'
+try {
+  const _startBtn = document.getElementById('btn-start');
+  if (_startBtn) {
+    const _applyStartStyle = () => {
+      const txt = (_startBtn.textContent || '').trim();
+      if (txt === 'Старт') {
+        _startBtn.style.backgroundColor = '#28a745';
+        _startBtn.style.color = 'white';
+      } else {
+        _startBtn.style.backgroundColor = '';
+        _startBtn.style.color = '';
+      }
+    };
+    _applyStartStyle();
+    const _mo = new MutationObserver(_applyStartStyle);
+    _mo.observe(_startBtn, { characterData: true, childList: true, subtree: true });
+    // Also re-apply on focus/blur clicks just in case some code swaps nodes
+    _startBtn.addEventListener('click', () => setTimeout(_applyStartStyle, 0));
+  }
+} catch(e) { console.warn('start button style observer error', e); }
+const pauseBtn = document.getElementById('btn-pause');
     const stopBtn  = document.getElementById('btn-stop');
     const rstBtn   = document.getElementById('btn-restart');
 
-    if(startBtn){
-      startBtn.onclick = async ()=>{
-        await ensureAudioUnlocked();
-        const label = (startBtn.textContent||'').trim();
+    // We also support a "test" button if it exists
+    const testBtn  = document.getElementById('btn-test');
 
-        if(label === 'Старт'){
-          if(remainingMs <= 0 && targetEndTs === 0) return;
-          isPaused = false;
-          if(targetEndTs === 0){ targetEndTs = Date.now() + remainingMs; }
-          startBtn.textContent = 'Пауза';
-          startBtn.style.backgroundColor = ''; startBtn.style.color = '';
-          saveState();
-          startIntervalLoop();
-          return;
-        }
-        if(label === 'Пауза'){
-          pauseTimer();
-          startBtn.textContent = 'Продолжить';
-          startBtn.style.backgroundColor = ''; startBtn.style.color = '';
-          timerUpdateUI();
-          return;
-        }
-        if(label === 'Продолжить'){
-          if(remainingMs <= 0) return;
-          isPaused = false;
-          targetEndTs = Date.now() + remainingMs;
-          startBtn.textContent = 'Пауза';
-          startBtn.style.backgroundColor = ''; startBtn.style.color = '';
-          saveState();
-          startIntervalLoop();
-          return;
-        }
+    if(testBtn){
+      testBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        await alarmStart();
+        setTimeout(alarmStop, 1200);
       };
     }
+
+    if(startBtn){
+  startBtn.onclick = async ()=>{
+    await ensureAudioUnlocked();
+    // If no remaining time => nothing to start
+    if(!timerInterval && remainingMs <= 0){ return; }
+
+    // If timer isn't running yet -> start
+    if(!timerInterval){
+      isPaused = false;
+      lastTickTs = Date.now();
+      timerUpdateUI();
+      startBtn.textContent = 'Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+      timerInterval = setInterval(()=>{
+        if(isPaused) return;
+        const now = Date.now();
+        const d = now - lastTickTs; lastTickTs = now;
+        remainingMs -= d;
+        if(remainingMs <= 0){
+          remainingMs = 0; timerUpdateUI();
+          clearInterval(timerInterval); timerInterval = null;
+          startBtn.textContent = 'Старт'; startBtn.style.backgroundColor='#28a745'; startBtn.style.color='white';
+          alarmStart();
+        } else {
+          timerUpdateUI();
+        }
+      }, 200);
+      return;
+    }
+
+    // If running and not paused -> pause
+    if(!isPaused){
+      isPaused = true;
+      startBtn.textContent = 'Продолжить'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+      return;
+    }
+
+    // If paused -> resume
+    isPaused = false;
+    lastTickTs = Date.now();
+    startBtn.textContent = 'Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+  };
+}
+    // pause button removed by design
     if(stopBtn){
       stopBtn.onclick = ()=>{
-        stopAll();
-        const startBtn = document.getElementById('btn-start');
-        if (startBtn){ startBtn.textContent='Старт'; startBtn.style.backgroundColor='#28a745'; startBtn.style.color='white'; }
+        if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+        alarmStop();
+      
+        if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+        isPaused=false;
+        startBtn && (startBtn.textContent='Старт');
+        alarmStop();
+      
+        remainingMs = 0;
+        timerUpdateUI();
       };
     }
     if(rstBtn){
@@ -347,78 +521,950 @@
         alarmStop();
         const originalSeconds = parseFloat((document.getElementById('result')||{}).dataset?.lastSeconds || '0');
         remainingMs = Math.max(0, Math.round((isFinite(originalSeconds)?originalSeconds:0)*1000));
-        isPaused = true;
-        targetEndTs = 0;
+        isPaused = false;
         timerUpdateUI();
         if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-        saveState();
-        const startBtn = document.getElementById('btn-start');
-        if (startBtn){ startBtn.textContent='Старт'; startBtn.style.backgroundColor='#28a745'; startBtn.style.color='white'; }
+      
+        isPaused=false;
+        startBtn && (startBtn.textContent='Старт');
       };
     }
   }
 
+  // Expose a helper to (re)prepare timer after calculation
   window.prepareTimerSeconds = function(seconds){
     const wrap = document.getElementById('timer-wrap');
     if(wrap) wrap.classList.remove('hidden');
     remainingMs = Math.max(0, Math.round(Number(seconds||0)*1000));
-    isPaused = true;
-    targetEndTs = 0;
+    isPaused = false;
     if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
     timerUpdateUI();
-    saveState();
   };
 
-  (function restoreOnLoad(){
-    const st = loadState();
-    if(st){
-      isPaused = !!st.isPaused;
-      remainingMs = Math.max(0, Number(st.remainingMs)||0);
-      targetEndTs = Number(st.targetEndTs)||0;
-      if(!isPaused && targetEndTs>0){
-        remainingMs = Math.max(0, targetEndTs - Date.now());
-        if(remainingMs <= 0){
-          stopAll();
-          alarmStart();
-        } else {
-          const startBtn = document.getElementById('btn-start');
-          if (startBtn){ startBtn.textContent = 'Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color=''; }
-          timerUpdateUI();
-          startIntervalLoop();
+  // Try to wire now and also after hash/page changes
+  wireButtons();
+
+  // === Persistence & background-robust behaviour patch ===
+  ;(function(){
+    const startBtn = document.getElementById('btn-start');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // Wrap existing handlers (if any)
+    const origStart = startBtn ? startBtn.onclick : null;
+    const origStop  = stopBtn  ? stopBtn.onclick  : null;
+    const origRst   = rstBtn   ? rstBtn.onclick   : null;
+
+    if(startBtn){
+      startBtn.onclick = async function(ev){
+        await ensureAudioUnlocked();
+        const label = (startBtn.textContent||'').trim();
+        if(label === 'Старт' || label === 'Продолжить'){
+          isPaused = false;
+          if(!endAtTs) endAtTs = Date.now() + remainingMs;
+          startBtn.textContent='Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+          ensureTicking(startBtn);
+          saveState();
+        } else if(label === 'Пауза'){
+          isPaused = true;
+          remainingMs = Math.max(0, endAtTs ? (endAtTs - Date.now()) : remainingMs);
+          endAtTs = 0; // freeze absolute deadline while paused
+          startBtn.textContent='Продолжить';
+          saveState();
+        } else if(typeof origStart === 'function'){
+          // Fallback to original if labels differ
+          return origStart.call(this, ev);
         }
-      } else {
-        const startBtn = document.getElementById('btn-start');
-        if (startBtn){ startBtn.textContent = 'Старт'; startBtn.style.backgroundColor='#28a745'; startBtn.style.color='white'; }
-        timerUpdateUI();
-      }
+      };
     }
+
+    if(stopBtn){
+      stopBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origStop === 'function') return origStop.call(this, ev);
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origRst === 'function') return origRst.call(this, ev);
+      };
+    }
+
+    // Save on backgrounding
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'hidden'){
+        if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+        saveState();
+      }
+    }, {passive:true});
+
+    window.addEventListener('pagehide', ()=>{
+      if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+      saveState();
+    }, {passive:true});
+
+    // Restore on return
+    const applyRestore = ()=>{
+      loadState();
+      if(!isPaused){
+        if(endAtTs && Date.now() >= endAtTs){
+          remainingMs = 0; timerUpdateUI(); alarmStart();
+        } else if(endAtTs){
+          const sb = document.getElementById('btn-start');
+          if(sb){ sb.textContent='Пауза'; sb.style.backgroundColor=''; sb.style.color=''; }
+          ensureTicking(sb);
+        }
+      }
+      timerUpdateUI();
+    };
+
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'visible') applyRestore();
+    }, {passive:true});
+    window.addEventListener('pageshow', applyRestore, {passive:true});
   })();
 
-  document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState === 'hidden'){
-      if(!isPaused && targetEndTs>0){
-        remainingMs = Math.max(0, targetEndTs - Date.now());
+
+  // Resume audio when page becomes visible again
+  document.addEventListener('visibilitychange', async ()=>{
+    try{
+      if(document.visibilityState === 'visible' && audioCtx && audioCtx.state === 'suspended'){
+        await audioCtx.resume();
       }
-      saveState();
-    } else if(document.visibilityState === 'visible'){
-      if(!isPaused && targetEndTs>0){
-        remainingMs = Math.max(0, targetEndTs - Date.now());
-        timerUpdateUI();
-        if(remainingMs <= 0){
-          stopAll(); alarmStart();
-        } else {
-          startIntervalLoop();
-        }
-      }
-      try{ if(audioCtx && audioCtx.state === 'suspended'){ audioCtx.resume(); } }catch(_){}
-    }
+    }catch(_){}
+  });
+})();
+
+
+
+// ===== Manual-start timer + robust alarm (WebAudio + vibration + notifications) =====
+(function(){
+  // Guard: don't double-inject
+  if (window.__fdtTimerPatched) return;
+  window.__fdtTimerPatched = true;
+
+  let timerInterval = null;
+  let remainingMs = 0;
+  let isPaused = false;
+  let lastTickTs = 0; // track last timestamp while running
+
+  // WebAudio alarm
+  let audioCtx = null;
+  let alarmNodes = [];
+  let audioReady = false;
+
+  // Vibration interval
+  let vibeInt = null;
+
+  // Try to unlock audio on any user gesture
+  async function ensureAudioUnlocked(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+      // tiny silent buffer
+      const buffer = audioCtx.createBuffer(1, 1, 22050);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer; src.connect(audioCtx.destination); src.start(0);
+      audioReady = true;
+    }catch(e){ console.warn('Audio unlock failed', e); }
+  }
+  ['pointerdown','touchstart','click','keydown'].forEach(evt=>{
+    window.addEventListener(evt, ()=>{ if(!audioReady) ensureAudioUnlocked(); }, {passive:true});
   });
 
-  window.addEventListener('pagehide', saveState);
-  window.addEventListener('beforeunload', saveState);
+  function msToMMSS(ms){
+    if(ms < 0) ms = 0;
+    const totalSec = Math.ceil(ms/1000);
+    const m = Math.floor(totalSec/60);
+    const s = totalSec % 60;
+    return m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+  }
+  function timerUpdateUI(){
+    const disp = document.getElementById('timer-display');
+    if(disp) disp.textContent = msToMMSS(remainingMs);
+  }
 
+  async function alarmStart(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+
+      // gentle dual-sine
+      const g = audioCtx.createGain();
+      g.gain.value = 0.05;
+      g.connect(audioCtx.destination);
+      const o1 = audioCtx.createOscillator();
+      const o2 = audioCtx.createOscillator();
+      o1.type='sine'; o2.type='sine';
+      o1.frequency.value = 880;   // A5
+      o2.frequency.value = 988;   // B5
+      o1.connect(g); o2.connect(g);
+      o1.start(); o2.start();
+      const lfo = audioCtx.createOscillator(); const lfoGain = audioCtx.createGain();
+      lfo.frequency.value = 3.0; lfoGain.gain.value = 0.04; lfo.connect(lfoGain).connect(g.gain); lfo.start();
+      alarmNodes = [o1,o2,lfo,g];
+
+      // vibration pattern loop
+      if('vibrate' in navigator){
+        if(vibeInt) clearInterval(vibeInt);
+        navigator.vibrate([400,200,400,600]);
+        vibeInt = setInterval(()=>{ navigator.vibrate([400,200,400,600]); }, 1800);
+      }
+
+      // notification
+      try{
+        if ("Notification" in window) {
+          if (Notification.permission === "granted") {
+            new Notification("Таймер завершён", { body: "Облучение закончилось ✅" });
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission();
+          }
+        }
+      }catch(e){ /* ignore */ }
+
+    }catch(e){
+      console.warn('alarmStart failed', e);
+    }
+  }
+
+  function alarmStop(){
+    try{
+      alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
+      alarmNodes = [];
+      if(vibeInt){ clearInterval(vibeInt); vibeInt = null; }
+      if('vibrate' in navigator){ navigator.vibrate(0); }
+    }catch(e){}
+  }
+
+  function stopAll(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    isPaused = false;
+    remainingMs = 0;
+    timerUpdateUI();
+    alarmStop();
+  }
+
+  // Wire buttons if present
+  function wireButtons(){
+    const startBtn = document.getElementById('btn-start');
+    const pauseBtn = document.getElementById('btn-pause');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // We also support a "test" button if it exists
+    const testBtn  = document.getElementById('btn-test');
+
+    if(testBtn){
+      testBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        await alarmStart();
+        setTimeout(alarmStop, 1200);
+      };
+    }
+
+    if(startBtn){
+      startBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        if(timerInterval || remainingMs<=0) return;
+        lastTickTs = Date.now();
+        timerUpdateUI();
+        timerInterval = setInterval(()=>{
+          if(isPaused) return;
+          const now = Date.now();
+          const d = now - lastTickTs; lastTickTs = now;
+          remainingMs -= d;
+          if(remainingMs <= 0){
+            remainingMs = 0; timerUpdateUI();
+            clearInterval(timerInterval); timerInterval = null;
+            alarmStart();
+          } else {
+            timerUpdateUI();
+          }
+        }, 200);
+      };
+    }
+    if(pauseBtn){
+      pauseBtn.onclick = ()=>{ isPaused = !isPaused; if(!isPaused){ lastTickTs = Date.now(); } pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза'; };
+    }
+    if(stopBtn){
+      stopBtn.onclick = ()=>{
+        if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+        alarmStop();
+      
+        isPaused=false;
+        remainingMs = 0;
+        timerUpdateUI();
+        startBtn && (startBtn.textContent='Старт');
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = ()=>{
+        alarmStop();
+        const originalSeconds = parseFloat((document.getElementById('result')||{}).dataset?.lastSeconds || '0');
+        remainingMs = Math.max(0, Math.round((isFinite(originalSeconds)?originalSeconds:0)*1000));
+        isPaused = false;
+        timerUpdateUI();
+        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+      };
+    }
+  }
+
+  // Expose a helper to (re)prepare timer after calculation
+  window.prepareTimerSeconds = function(seconds){
+    const wrap = document.getElementById('timer-wrap');
+    if(wrap) wrap.classList.remove('hidden');
+    remainingMs = Math.max(0, Math.round(Number(seconds||0)*1000));
+    isPaused = false;
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    timerUpdateUI();
+  };
+
+  // Try to wire now and also after hash/page changes
   wireButtons();
+
+  // === Persistence & background-robust behaviour patch ===
+  ;(function(){
+    const startBtn = document.getElementById('btn-start');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // Wrap existing handlers (if any)
+    const origStart = startBtn ? startBtn.onclick : null;
+    const origStop  = stopBtn  ? stopBtn.onclick  : null;
+    const origRst   = rstBtn   ? rstBtn.onclick   : null;
+
+    if(startBtn){
+      startBtn.onclick = async function(ev){
+        await ensureAudioUnlocked();
+        const label = (startBtn.textContent||'').trim();
+        if(label === 'Старт' || label === 'Продолжить'){
+          isPaused = false;
+          if(!endAtTs) endAtTs = Date.now() + remainingMs;
+          startBtn.textContent='Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+          ensureTicking(startBtn);
+          saveState();
+        } else if(label === 'Пауза'){
+          isPaused = true;
+          remainingMs = Math.max(0, endAtTs ? (endAtTs - Date.now()) : remainingMs);
+          endAtTs = 0; // freeze absolute deadline while paused
+          startBtn.textContent='Продолжить';
+          saveState();
+        } else if(typeof origStart === 'function'){
+          // Fallback to original if labels differ
+          return origStart.call(this, ev);
+        }
+      };
+    }
+
+    if(stopBtn){
+      stopBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origStop === 'function') return origStop.call(this, ev);
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origRst === 'function') return origRst.call(this, ev);
+      };
+    }
+
+    // Save on backgrounding
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'hidden'){
+        if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+        saveState();
+      }
+    }, {passive:true});
+
+    window.addEventListener('pagehide', ()=>{
+      if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+      saveState();
+    }, {passive:true});
+
+    // Restore on return
+    const applyRestore = ()=>{
+      loadState();
+      if(!isPaused){
+        if(endAtTs && Date.now() >= endAtTs){
+          remainingMs = 0; timerUpdateUI(); alarmStart();
+        } else if(endAtTs){
+          const sb = document.getElementById('btn-start');
+          if(sb){ sb.textContent='Пауза'; sb.style.backgroundColor=''; sb.style.color=''; }
+          ensureTicking(sb);
+        }
+      }
+      timerUpdateUI();
+    };
+
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'visible') applyRestore();
+    }, {passive:true});
+    window.addEventListener('pageshow', applyRestore, {passive:true});
+  })();
+
+
+  // Resume audio when page becomes visible again
+  document.addEventListener('visibilitychange', async ()=>{
+    try{
+      if(document.visibilityState === 'visible' && audioCtx && audioCtx.state === 'suspended'){
+        await audioCtx.resume();
+      }
+    }catch(_){}
+  });
 })();
+
+
+
+// ===== Manual-start timer + robust alarm (WebAudio + vibration + notifications) =====
+(function(){
+  // Guard: don't double-inject
+  if (window.__fdtTimerPatched) return;
+  window.__fdtTimerPatched = true;
+
+  let timerInterval = null;
+  let remainingMs = 0;
+  let isPaused = false;
+  let lastTickTs = 0; // track last timestamp while running
+
+  // WebAudio alarm
+  let audioCtx = null;
+  let alarmNodes = [];
+  let audioReady = false;
+
+  // Vibration interval
+  let vibeInt = null;
+
+  // Try to unlock audio on any user gesture
+  async function ensureAudioUnlocked(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+      // tiny silent buffer
+      const buffer = audioCtx.createBuffer(1, 1, 22050);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer; src.connect(audioCtx.destination); src.start(0);
+      audioReady = true;
+    }catch(e){ console.warn('Audio unlock failed', e); }
+  }
+  ['pointerdown','touchstart','click','keydown'].forEach(evt=>{
+    window.addEventListener(evt, ()=>{ if(!audioReady) ensureAudioUnlocked(); }, {passive:true});
+  });
+
+  function msToMMSS(ms){
+    if(ms < 0) ms = 0;
+    const totalSec = Math.ceil(ms/1000);
+    const m = Math.floor(totalSec/60);
+    const s = totalSec % 60;
+    return m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+  }
+  function timerUpdateUI(){
+    const disp = document.getElementById('timer-display');
+    if(disp) disp.textContent = msToMMSS(remainingMs);
+  }
+
+  async function alarmStart(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+
+      // gentle dual-sine
+      const g = audioCtx.createGain();
+      g.gain.value = 0.05;
+      g.connect(audioCtx.destination);
+      const o1 = audioCtx.createOscillator();
+      const o2 = audioCtx.createOscillator();
+      o1.type='sine'; o2.type='sine';
+      o1.frequency.value = 880;   // A5
+      o2.frequency.value = 988;   // B5
+      o1.connect(g); o2.connect(g);
+      o1.start(); o2.start();
+      const lfo = audioCtx.createOscillator(); const lfoGain = audioCtx.createGain();
+      lfo.frequency.value = 3.0; lfoGain.gain.value = 0.04; lfo.connect(lfoGain).connect(g.gain); lfo.start();
+      alarmNodes = [o1,o2,lfo,g];
+
+      // vibration pattern loop
+      if('vibrate' in navigator){
+        if(vibeInt) clearInterval(vibeInt);
+        navigator.vibrate([400,200,400,600]);
+        vibeInt = setInterval(()=>{ navigator.vibrate([400,200,400,600]); }, 1800);
+      }
+
+      // notification
+      try{
+        if ("Notification" in window) {
+          if (Notification.permission === "granted") {
+            new Notification("Таймер завершён", { body: "Облучение закончилось ✅" });
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission();
+          }
+        }
+      }catch(e){ /* ignore */ }
+
+    }catch(e){
+      console.warn('alarmStart failed', e);
+    }
+  }
+
+  function alarmStop(){
+    try{
+      alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
+      alarmNodes = [];
+      if(vibeInt){ clearInterval(vibeInt); vibeInt = null; }
+      if('vibrate' in navigator){ navigator.vibrate(0); }
+    }catch(e){}
+  }
+
+  function stopAll(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    isPaused = false;
+    remainingMs = 0;
+    timerUpdateUI();
+    alarmStop();
+  }
+
+  // Wire buttons if present
+  function wireButtons(){
+    const startBtn = document.getElementById('btn-start');
+    const pauseBtn = document.getElementById('btn-pause');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // We also support a "test" button if it exists
+    const testBtn  = document.getElementById('btn-test');
+
+    if(testBtn){
+      testBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        await alarmStart();
+        setTimeout(alarmStop, 1200);
+      };
+    }
+
+    if(startBtn){
+      startBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        if(timerInterval || remainingMs<=0) return;
+        lastTickTs = Date.now();
+        timerUpdateUI();
+        timerInterval = setInterval(()=>{
+          if(isPaused) return;
+          const now = Date.now();
+          const d = now - lastTickTs; lastTickTs = now;
+          remainingMs -= d;
+          if(remainingMs <= 0){
+            remainingMs = 0; timerUpdateUI();
+            clearInterval(timerInterval); timerInterval = null;
+            alarmStart();
+          } else {
+            timerUpdateUI();
+          }
+        }, 200);
+      };
+    }
+    if(pauseBtn){
+      pauseBtn.onclick = ()=>{ isPaused = !isPaused; if(!isPaused){ lastTickTs = Date.now(); } pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза'; };
+    }
+    if(stopBtn){
+      stopBtn.onclick = ()=>{
+        if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+        alarmStop();
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = ()=>{
+        alarmStop();
+        const originalSeconds = parseFloat((document.getElementById('result')||{}).dataset?.lastSeconds || '0');
+        remainingMs = Math.max(0, Math.round((isFinite(originalSeconds)?originalSeconds:0)*1000));
+        isPaused = false;
+        timerUpdateUI();
+        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+      };
+    }
+  }
+
+  // Expose a helper to (re)prepare timer after calculation
+  window.prepareTimerSeconds = function(seconds){
+    const wrap = document.getElementById('timer-wrap');
+    if(wrap) wrap.classList.remove('hidden');
+    remainingMs = Math.max(0, Math.round(Number(seconds||0)*1000));
+    isPaused = false;
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    timerUpdateUI();
+  };
+
+  // Try to wire now and also after hash/page changes
+  wireButtons();
+
+  // === Persistence & background-robust behaviour patch ===
+  ;(function(){
+    const startBtn = document.getElementById('btn-start');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // Wrap existing handlers (if any)
+    const origStart = startBtn ? startBtn.onclick : null;
+    const origStop  = stopBtn  ? stopBtn.onclick  : null;
+    const origRst   = rstBtn   ? rstBtn.onclick   : null;
+
+    if(startBtn){
+      startBtn.onclick = async function(ev){
+        await ensureAudioUnlocked();
+        const label = (startBtn.textContent||'').trim();
+        if(label === 'Старт' || label === 'Продолжить'){
+          isPaused = false;
+          if(!endAtTs) endAtTs = Date.now() + remainingMs;
+          startBtn.textContent='Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+          ensureTicking(startBtn);
+          saveState();
+        } else if(label === 'Пауза'){
+          isPaused = true;
+          remainingMs = Math.max(0, endAtTs ? (endAtTs - Date.now()) : remainingMs);
+          endAtTs = 0; // freeze absolute deadline while paused
+          startBtn.textContent='Продолжить';
+          saveState();
+        } else if(typeof origStart === 'function'){
+          // Fallback to original if labels differ
+          return origStart.call(this, ev);
+        }
+      };
+    }
+
+    if(stopBtn){
+      stopBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origStop === 'function') return origStop.call(this, ev);
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origRst === 'function') return origRst.call(this, ev);
+      };
+    }
+
+    // Save on backgrounding
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'hidden'){
+        if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+        saveState();
+      }
+    }, {passive:true});
+
+    window.addEventListener('pagehide', ()=>{
+      if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+      saveState();
+    }, {passive:true});
+
+    // Restore on return
+    const applyRestore = ()=>{
+      loadState();
+      if(!isPaused){
+        if(endAtTs && Date.now() >= endAtTs){
+          remainingMs = 0; timerUpdateUI(); alarmStart();
+        } else if(endAtTs){
+          const sb = document.getElementById('btn-start');
+          if(sb){ sb.textContent='Пауза'; sb.style.backgroundColor=''; sb.style.color=''; }
+          ensureTicking(sb);
+        }
+      }
+      timerUpdateUI();
+    };
+
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'visible') applyRestore();
+    }, {passive:true});
+    window.addEventListener('pageshow', applyRestore, {passive:true});
+  })();
+
+
+  // Resume audio when page becomes visible again
+  document.addEventListener('visibilitychange', async ()=>{
+    try{
+      if(document.visibilityState === 'visible' && audioCtx && audioCtx.state === 'suspended'){
+        await audioCtx.resume();
+      }
+    }catch(_){}
+  });
+})();
+
+
+
+// ===== Manual-start timer + robust alarm (WebAudio + vibration + notifications) =====
+(function(){
+  // Guard: don't double-inject
+  if (window.__fdtTimerPatched) return;
+  window.__fdtTimerPatched = true;
+
+  let timerInterval = null;
+  let remainingMs = 0;
+  let isPaused = false;
+  let lastTickTs = 0; // track last timestamp while running
+
+  // WebAudio alarm
+  let audioCtx = null;
+  let alarmNodes = [];
+  let audioReady = false;
+
+  // Vibration interval
+  let vibeInt = null;
+
+  // Try to unlock audio on any user gesture
+  async function ensureAudioUnlocked(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+      // tiny silent buffer
+      const buffer = audioCtx.createBuffer(1, 1, 22050);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer; src.connect(audioCtx.destination); src.start(0);
+      audioReady = true;
+    }catch(e){ console.warn('Audio unlock failed', e); }
+  }
+  ['pointerdown','touchstart','click','keydown'].forEach(evt=>{
+    window.addEventListener(evt, ()=>{ if(!audioReady) ensureAudioUnlocked(); }, {passive:true});
+  });
+
+  function msToMMSS(ms){
+    if(ms < 0) ms = 0;
+    const totalSec = Math.ceil(ms/1000);
+    const m = Math.floor(totalSec/60);
+    const s = totalSec % 60;
+    return m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+  }
+  function timerUpdateUI(){
+    const disp = document.getElementById('timer-display');
+    if(disp) disp.textContent = msToMMSS(remainingMs);
+  }
+
+  async function alarmStart(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+
+      // gentle dual-sine
+      const g = audioCtx.createGain();
+      g.gain.value = 0.05;
+      g.connect(audioCtx.destination);
+      const o1 = audioCtx.createOscillator();
+      const o2 = audioCtx.createOscillator();
+      o1.type='sine'; o2.type='sine';
+      o1.frequency.value = 880;   // A5
+      o2.frequency.value = 988;   // B5
+      o1.connect(g); o2.connect(g);
+      o1.start(); o2.start();
+      const lfo = audioCtx.createOscillator(); const lfoGain = audioCtx.createGain();
+      lfo.frequency.value = 3.0; lfoGain.gain.value = 0.04; lfo.connect(lfoGain).connect(g.gain); lfo.start();
+      alarmNodes = [o1,o2,lfo,g];
+
+      // vibration pattern loop
+      if('vibrate' in navigator){
+        if(vibeInt) clearInterval(vibeInt);
+        navigator.vibrate([400,200,400,600]);
+        vibeInt = setInterval(()=>{ navigator.vibrate([400,200,400,600]); }, 1800);
+      }
+
+      // notification
+      try{
+        if ("Notification" in window) {
+          if (Notification.permission === "granted") {
+            new Notification("Таймер завершён", { body: "Облучение закончилось ✅" });
+          } else if (Notification.permission !== "denied") {
+            Notification.requestPermission();
+          }
+        }
+      }catch(e){ /* ignore */ }
+
+    }catch(e){
+      console.warn('alarmStart failed', e);
+    }
+  }
+
+  function alarmStop(){
+    try{
+      alarmNodes.forEach(n=>{ try{ n.stop?.(); n.disconnect?.(); }catch(_){ } });
+      alarmNodes = [];
+      if(vibeInt){ clearInterval(vibeInt); vibeInt = null; }
+      if('vibrate' in navigator){ navigator.vibrate(0); }
+    }catch(e){}
+  }
+
+  function stopAll(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    isPaused = false;
+    remainingMs = 0;
+    timerUpdateUI();
+    alarmStop();
+  }
+
+  // Wire buttons if present
+  function wireButtons(){
+    const startBtn = document.getElementById('btn-start');
+    const pauseBtn = document.getElementById('btn-pause');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // We also support a "test" button if it exists
+    const testBtn  = document.getElementById('btn-test');
+
+    if(testBtn){
+      testBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        await alarmStart();
+        setTimeout(alarmStop, 1200);
+      };
+    }
+
+    if(startBtn){
+      startBtn.onclick = async ()=>{
+        await ensureAudioUnlocked();
+        if(timerInterval || remainingMs<=0) return;
+        lastTickTs = Date.now();
+        timerUpdateUI();
+        timerInterval = setInterval(()=>{
+          if(isPaused) return;
+          const now = Date.now();
+          const d = now - lastTickTs; lastTickTs = now;
+          remainingMs -= d;
+          if(remainingMs <= 0){
+            remainingMs = 0; timerUpdateUI();
+            clearInterval(timerInterval); timerInterval = null;
+            alarmStart();
+          } else {
+            timerUpdateUI();
+          }
+        }, 200);
+      };
+    }
+    if(pauseBtn){
+      pauseBtn.onclick = ()=>{ isPaused = !isPaused; if(!isPaused){ lastTickTs = Date.now(); } pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза'; };
+    }
+    if(stopBtn){
+      stopBtn.onclick = ()=>{
+        if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+        alarmStop();
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = ()=>{
+        alarmStop();
+        const originalSeconds = parseFloat((document.getElementById('result')||{}).dataset?.lastSeconds || '0');
+        remainingMs = Math.max(0, Math.round((isFinite(originalSeconds)?originalSeconds:0)*1000));
+        isPaused = false;
+        timerUpdateUI();
+        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+      };
+    }
+  }
+
+  // Expose a helper to (re)prepare timer after calculation
+  window.prepareTimerSeconds = function(seconds){
+    const wrap = document.getElementById('timer-wrap');
+    if(wrap) wrap.classList.remove('hidden');
+    remainingMs = Math.max(0, Math.round(Number(seconds||0)*1000));
+    isPaused = false;
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    timerUpdateUI();
+  };
+
+  // Try to wire now and also after hash/page changes
+  wireButtons();
+
+  // === Persistence & background-robust behaviour patch ===
+  ;(function(){
+    const startBtn = document.getElementById('btn-start');
+    const stopBtn  = document.getElementById('btn-stop');
+    const rstBtn   = document.getElementById('btn-restart');
+
+    // Wrap existing handlers (if any)
+    const origStart = startBtn ? startBtn.onclick : null;
+    const origStop  = stopBtn  ? stopBtn.onclick  : null;
+    const origRst   = rstBtn   ? rstBtn.onclick   : null;
+
+    if(startBtn){
+      startBtn.onclick = async function(ev){
+        await ensureAudioUnlocked();
+        const label = (startBtn.textContent||'').trim();
+        if(label === 'Старт' || label === 'Продолжить'){
+          isPaused = false;
+          if(!endAtTs) endAtTs = Date.now() + remainingMs;
+          startBtn.textContent='Пауза'; startBtn.style.backgroundColor=''; startBtn.style.color='';
+          ensureTicking(startBtn);
+          saveState();
+        } else if(label === 'Пауза'){
+          isPaused = true;
+          remainingMs = Math.max(0, endAtTs ? (endAtTs - Date.now()) : remainingMs);
+          endAtTs = 0; // freeze absolute deadline while paused
+          startBtn.textContent='Продолжить';
+          saveState();
+        } else if(typeof origStart === 'function'){
+          // Fallback to original if labels differ
+          return origStart.call(this, ev);
+        }
+      };
+    }
+
+    if(stopBtn){
+      stopBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origStop === 'function') return origStop.call(this, ev);
+      };
+    }
+    if(rstBtn){
+      rstBtn.onclick = function(ev){
+        endAtTs = 0; saveState();
+        if(typeof origRst === 'function') return origRst.call(this, ev);
+      };
+    }
+
+    // Save on backgrounding
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'hidden'){
+        if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+        saveState();
+      }
+    }, {passive:true});
+
+    window.addEventListener('pagehide', ()=>{
+      if(!isPaused && endAtTs){ remainingMs = Math.max(0, endAtTs - Date.now()); }
+      saveState();
+    }, {passive:true});
+
+    // Restore on return
+    const applyRestore = ()=>{
+      loadState();
+      if(!isPaused){
+        if(endAtTs && Date.now() >= endAtTs){
+          remainingMs = 0; timerUpdateUI(); alarmStart();
+        } else if(endAtTs){
+          const sb = document.getElementById('btn-start');
+          if(sb){ sb.textContent='Пауза'; sb.style.backgroundColor=''; sb.style.color=''; }
+          ensureTicking(sb);
+        }
+      }
+      timerUpdateUI();
+    };
+
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'visible') applyRestore();
+    }, {passive:true});
+    window.addEventListener('pageshow', applyRestore, {passive:true});
+  })();
+
+
+  // Resume audio when page becomes visible again
+  document.addEventListener('visibilitychange', async ()=>{
+    try{
+      if(document.visibilityState === 'visible' && audioCtx && audioCtx.state === 'suspended'){
+        await audioCtx.resume();
+      }
+    }catch(_){}
+  });
+})();
+
+
+
 </script>
 
 <script>
